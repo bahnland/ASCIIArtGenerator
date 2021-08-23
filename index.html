@@ -4,20 +4,80 @@
         <title>ASCII Art Generator by Kartoffel Server</title>
     </head>
     <body>
+        <label for="userText">先输入单词</label>
         <input type="text" name="userText" id="userText" onchange="render()">
-        <canvas id="background" width="128" height="36"></canvas>
+        <label for="fontSelect">再选择一个预装字体</label>
+
+        <select id="fontSelect" onchange="change_font(this.options[this.options.selectedIndex].value)">
+            <option value="'Microsoft YaHei UI'">只能选自己计算机上有的哟（都没有就选我）</option>
+            <option value="'Old English Text MT'">Old English Text MT （哥特风/Blackletter）</option>
+            <option value="'Lucida Handwriting'">Lucida Handwriting （手写体/Cursive Script）</option>
+            <option value="'Cascadia Code'">Cascadia Code （码农必备/Monospace）</option>
+            <option value="'Georgia'">Georgia （小屏显示用/Serif）</option>
+            <option value="'Gill Sans MT'">Gill Sans MT （伦敦地铁/Sans Serif）</option>
+            <option value="'Century Gothic'">Century Gothic （未来主义/Geometric）</option>
+        </select>
+
+        <input type="checkbox" id="bold_checkbox" value="bold" onchange="toggle_bold(this.checked)">
+        <label for="bold_checkbox">粗体</label>
+
+        <input type="checkbox" id="italic_checkbox" value="italic" onchange="toggle_italic(this.checked)">
+        <label for="italic_checkbox">斜体</label>
+
+        <input type="checkbox" id="spacing_checkbox" value="spacing" onchange="toggle_spacing(this.checked)">
+        <label for="spacing_checkbox">额外空白</label>
+        
+        <canvas id="background" width="200" height="36"></canvas>
+        
         <button onclick="redraw()">生成！</button>
         <hr />
-        <textarea id="textBuffer" cols="130" rows="36"></textarea>
+        <textarea style="font-family: 'Courier New', Courier, monospace; font-size:xx-small;" id="textBuffer" cols="200" rows="40">
+        </textarea>
 
         <script type="text/javascript">
+
+            var fontface = "Verdana";
+            var use_italic = false, use_bold = false, use_spacing = false;
+
+            function change_font(new_fontface) {
+                fontface = new_fontface;
+                render();
+            }
 
             function render() {
                 const canvas = document.getElementById('background');
                 var ctx = canvas.getContext('2d');
                 ctx.clearRect (0, 0, canvas.width, canvas.height);
-                ctx.font = "italic 28px Candara";
-                ctx.fillText(document.getElementById("userText").value, 6, 28);
+                if (use_italic && use_bold) {
+                    ctx.font = "italic bold 30px " + fontface;
+                } else if (use_italic) {
+                    ctx.font = "italic 30px " + fontface;
+                } else if (use_bold) {
+                    ctx.font = "bold 30px " + fontface;
+                } else {
+                    ctx.font = "30px " + fontface;
+                }
+                ctx.fillText(document.getElementById("userText").value, 2, 26);
+            }
+
+            function toggle_italic(selected) {
+                use_italic = selected;
+                render();
+            }
+
+            function toggle_bold(selected) {
+                use_bold = selected;
+                render();
+            }
+
+            function toggle_spacing(selected) {
+                use_spacing = selected;
+                if (use_spacing) {
+                    document.getElementById('textBuffer').cols = 250;
+                } else {
+                    document.getElementById('textBuffer').cols = 200;
+                }
+                redraw();
             }
 
             function redraw() {
@@ -34,6 +94,9 @@
                             textBuffer += " ";
                         } else {
                             textBuffer += ":";
+                        }
+                        if (use_spacing && x % 4 == 3) {    
+                            textBuffer += " ";
                         }
                     }
                     textBuffer += "\n"
