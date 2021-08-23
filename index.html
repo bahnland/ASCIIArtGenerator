@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <title>ASCII Art Generator by Kartoffel Server</title>
+    </head>
+    <body>
+        <input type="text" name="userText" id="userText" onchange="render()">
+        <canvas id="background" width="128" height="36"></canvas>
+        <button onclick="redraw()">生成！</button>
+        <hr />
+        <textarea id="textBuffer" cols="130" rows="36"></textarea>
+
+        <script type="text/javascript">
+
+            function render() {
+                const canvas = document.getElementById('background');
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect (0, 0, canvas.width, canvas.height);
+                ctx.font = "italic 28px Candara";
+                ctx.fillText(document.getElementById("userText").value, 6, 28);
+            }
+
+            function redraw() {
+                const canvas = document.getElementById('background');
+                var ctx = canvas.getContext('2d');
+                var textBuffer = "";
+                var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+                var skip = 1;
+                for (var y = 0; y < canvas.height; y += skip) {
+                    for (var x = 0; x < canvas.width; x += skip) {
+                        var opacityIndex = (x + y * canvas.width) * 4 + 3;
+                        if (imgData[opacityIndex] > 0) {
+                            textBuffer += " ";
+                        } else {
+                            textBuffer += ":";
+                        }
+                    }
+                    textBuffer += "\n"
+                }
+                document.getElementById("textBuffer").value = textBuffer;
+            }
+        </script>
+    </body>
+</html>
