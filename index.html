@@ -31,8 +31,21 @@
         
         <button onclick="redraw()">生成！</button>
         <hr />
+
         <textarea style="font-family: 'Courier New', Courier, monospace; font-size:xx-small;" id="textBuffer" cols="200" rows="40">
         </textarea>
+
+        <hr />
+
+        <p>您是第<span id="visits">1</span>位访客；欢迎在<a href="https://www.douban.com/people/240396456/">豆瓣</a>上关注我(●′ω`●)</p>
+
+        <script type="text/javascript">
+            function cb(response) {
+                document.getElementById('visits').innerText = response.value;
+            }
+            
+        </script>
+        <script async src="https://api.countapi.xyz/hit/ASCIIArtGenerator.bahnland.github.io/visits?callback=cb"></script>
 
         <script type="text/javascript">
 
@@ -63,11 +76,13 @@
             function toggle_italic(selected) {
                 use_italic = selected;
                 render();
+                redraw();
             }
 
             function toggle_bold(selected) {
                 use_bold = selected;
                 render();
+                redraw();
             }
 
             function toggle_spacing(selected) {
